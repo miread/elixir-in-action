@@ -30,11 +30,27 @@ defmodule ServerProcess do
 
 end
 
+# Test Module
 defmodule KeyValueStore do
+  # Internal, creates base structure
   def init do
     %{}
   end
 
+  # Three helper/interface functions
+  def start do
+    ServerProcess.start(KeyValueStore)
+  end
+
+  def put(pid, key, value) do
+    ServerProcess.call(pid, {:put, key, value})
+  end
+
+  def get(pid, key) do
+    ServerProcess.call(pid, {:get, key})
+  end
+
+  # Two callback functions to internally handle the data state
   def handle_call({:put, key, value}, state) do
     {:ok, Map.put(state, key, value)}
   end
