@@ -2,9 +2,9 @@ defmodule Todo.Database do
   use GenServer
 
   def init(path) do
-    {:ok, worker_1} = Todo.DatabaseWorker.start(path)
-    {:ok, worker_2} = Todo.DatabaseWorker.start(path)
-    {:ok, worker_3} = Todo.DatabaseWorker.start(path)
+    {:ok, worker_1} = Todo.DatabaseWorker.start_link(path)
+    {:ok, worker_2} = Todo.DatabaseWorker.start_link(path)
+    {:ok, worker_3} = Todo.DatabaseWorker.start_link(path)
     {:ok, %{0 => worker_1, 1 => worker_2, 2 => worker_3}}
   end
 
@@ -32,8 +32,9 @@ defmodule Todo.Database do
 
 
   #Interface
-  def start(path) do
-    GenServer.start(__MODULE__, path, name: :db_id)
+  def start_link(path) do
+    IO.puts "Starting database server."
+    GenServer.start_link(__MODULE__, path, name: :db_id)
   end
 
   def get(key) do

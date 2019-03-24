@@ -26,8 +26,9 @@ defmodule Todo.DatabaseWorker do
   end
 
   #Interface
-  def start(path) do
-    GenServer.start(__MODULE__, path)
+  def start_link(path) do
+    IO.puts "Starting database worker."
+    GenServer.start_link(__MODULE__, path)
   end
 
   def get(pid, key) do
