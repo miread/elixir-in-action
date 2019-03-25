@@ -10,6 +10,10 @@ defmodule Todo.DatabaseWorker do
     "#{path}/#{file}"
   end
 
+  defp via_tuple(worker_id) do
+    {:via, Todo.ProcessRegistry, {:database_worker, worker_id}}
+  end
+
   def handle_call({:get, key}, caller, path) do
     data = case File.read(file_name(path, key)) do
              {:ok, contents} -> :erlang.binary_to_term(contents)
@@ -26,17 +30,17 @@ defmodule Todo.DatabaseWorker do
   end
 
   #Interface
-  def start_link(path) do
-    IO.puts "Starting database worker."
-    GenServer.start_link(__MODULE__, path)
+  def start_link(path, worker_id) do
+    IO.puts "Starting database worker #{worker_id}."
+    GenServer.start_link(__MODULE__, path, name: via_tuple(worker_id))
   end
 
-  def get(pid, key) do
-    GenServer.call(pid, {:get, key})
+  def get(worker_id, key) do
+    GenServer.call(via_tuple(worker_id), {:get, key})
   end
 
-  def store(pid, key, value) do
-    GenServer.cast(pid, {:store, key, value})
+  def store(worker_id, key, value) do
+    GenServer.cast(via_tuple(worker_id), {:store, key, value})
   end
 
 end

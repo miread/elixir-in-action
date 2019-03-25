@@ -4,8 +4,9 @@ defmodule Todo.Supervisor do
   def init(_) do
     # List of supervised processes:
     children = [
-      %{id: Cache, start: {Todo.Cache, :start_link, []}},
-      %{id: Database, start: {Todo.Database, :start_link, ["./persist/"]}}
+      %{id: ProcessRegistry, start: {Todo.ProcessRegistry, :start_link, []}},
+      %{id: Database, start: {Todo.Database, :start_link, ["./persist/"]}},
+      %{id: Cache, start: {Todo.Cache, :start_link, []}}
     ]
     # Supervisor specification
     Supervisor.init(children, strategy: :one_for_one)
